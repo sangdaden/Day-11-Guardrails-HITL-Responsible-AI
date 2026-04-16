@@ -38,9 +38,16 @@ def detect_injection(user_input: str) -> bool:
         True if injection detected, False otherwise
     """
     INJECTION_PATTERNS = [
-        # TODO: Add at least 5 regex patterns
-        # Example:
-        # r"ignore (all )?(previous|above) instructions",
+        r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?",
+        r"\byou\s+are\s+now\b",
+        r"\bsystem\s+prompt\b",
+        r"reveal\s+your\s+(instructions?|prompt)",
+        r"\bpretend\s+you\s+are\b",
+        r"\bact\s+as\s+(a\s+|an\s+)?unrestricted\b",
+        r"\boverride\s+safety\b",
+        r"\bforget\s+(all\s+)?(rules|instructions?)\b",
+        r"\bjailbreak\b",
+        r"\bbypass\s+(guardrails|filters?)\b",
     ]
 
     for pattern in INJECTION_PATTERNS:
@@ -70,12 +77,13 @@ def topic_filter(user_input: str) -> bool:
     """
     input_lower = user_input.lower()
 
-    # TODO: Implement logic:
-    # 1. If input contains any blocked topic -> return True
-    # 2. If input doesn't contain any allowed topic -> return True
-    # 3. Otherwise -> return False (allow)
+    if any(topic in input_lower for topic in BLOCKED_TOPICS):
+        return True
 
-    pass  # Replace with your implementation
+    if not any(topic in input_lower for topic in ALLOWED_TOPICS):
+        return True
+
+    return False
 
 
 # ============================================================
@@ -128,14 +136,19 @@ class InputGuardrailPlugin(base_plugin.BasePlugin):
         self.total_count += 1
         text = self._extract_text(user_message)
 
-        # TODO: Implement logic:
-        # 1. Call detect_injection(text)
-        #    - If True: increment blocked_count, return self._block_response("...")
-        # 2. Call topic_filter(text)
-        #    - If True: increment blocked_count, return self._block_response("...")
-        # 3. If both are False: return None (let message through)
+        if detect_injection(text):
+            self.blocked_count += 1
+            return self._block_response(
+                "I cannot process this request because it appears to contain prompt-injection instructions."
+            )
 
-        pass  # Replace with your implementation
+        if topic_filter(text):
+            self.blocked_count += 1
+            return self._block_response(
+                "I can only help with safe, banking-related questions. Please rephrase your request."
+            )
+
+        return None
 
 
 # ============================================================

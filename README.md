@@ -33,6 +33,7 @@ Day-11-Guardrails-HITL-Responsible-AI/
 │   │   └── nemo_guardrails.py     # TODO 9: NeMo Guardrails with Colang
 │   ├── testing/
 │   │   └── testing.py             # TODO 10-11: Before/after comparison, pipeline
+│   │   └── defense_pipeline.py    # Assignment 11: production defense-in-depth pipeline
 │   └── hitl/
 │       └── hitl.py                # TODO 12-13: Confidence router, HITL design
 ├── requirements.txt
@@ -76,14 +77,58 @@ python main.py --part 4    # Part 4: HITL design
 python guardrails/input_guardrails.py
 python guardrails/output_guardrails.py
 python testing/testing.py
+python testing/defense_pipeline.py
 python hitl/hitl.py
 ```
+
+### Local UI Demo (Red Team vs Blue Team)
+
+Chay dashboard giao dien de demo va phan tich su khac nhau giua:
+- Unsafe lane (khong guardrails)
+- Protected lane (input + output guardrails + judge)
+
+```bash
+pip install -r requirements.txt
+streamlit run src/demo_ui.py
+```
+
+Trong UI:
+- Nhap `GOOGLE_API_KEY` o sidebar
+- Bam `Chay demo`
+- Xem bang so sanh theo tung round, metric tong quan, va phan tich chenh lech
+
+### Local UI Demo (Single Question)
+
+Neu ban muon demo tung cau hoi rieng le (khong chay ca bo round), dung UI nay:
+
+```bash
+streamlit run src/question_demo_ui.py
+```
+
+Trong UI:
+- Nhap `GOOGLE_API_KEY` o sidebar
+- Nhap 1 cau hoi/prompt vao o text
+- Bam `So sanh ngay` de xem ket qua Unsafe vs Protected theo tung cau
 
 ### Tools Used
 
 - **Google ADK** — Agent Development Kit (plugins, runners)
 - **NeMo Guardrails** — NVIDIA framework with Colang (declarative safety rules)
 - **Gemini 2.5 Flash/Flash Lite** — LLM backend (you can switch to other models if you want)
+
+### Note for Windows + Python 3.12 (annoy build error)
+
+If you see this during `pip install -r requirements.txt`:
+- `ERROR: Failed building wheel for annoy`
+
+Reason:
+- `nemoguardrails` can pull dependencies that require compiling `annoy`, which needs Microsoft C++ Build Tools on some Windows/Python combinations.
+
+What to do:
+1. Continue without NeMo (recommended for this repo's core demo): NeMo is optional and other parts still run.
+2. If you need NeMo features:
+	- Use Python 3.11 environment, then install requirements again.
+	- Or install Microsoft C++ Build Tools and retry installation.
 
 ## Lab Structure (2.5 hours)
 

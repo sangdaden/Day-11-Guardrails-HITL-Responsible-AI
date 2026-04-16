@@ -8,6 +8,7 @@ Usage:
     python main.py --part 2     # Run only Part 2 (guardrails)
     python main.py --part 3     # Run only Part 3 (testing pipeline)
     python main.py --part 4     # Run only Part 4 (HITL design)
+    python main.py --part 5     # Run only Part 5 (Red vs Blue demo)
 """
 import sys
 import asyncio
@@ -103,6 +104,15 @@ async def part3_testing():
         pipeline.print_report(results)
     else:
         print("Complete TODO 11 to see the pipeline report.")
+
+    # Assignment 11: Production defense-in-depth pipeline
+    print("\n--- Assignment 11: Defense-in-Depth Pipeline ---")
+    try:
+        from testing.defense_pipeline import demo_assignment_pipeline
+
+        await demo_assignment_pipeline(export_path="security_audit.json")
+    except Exception as e:
+        print(f"Assignment pipeline demo skipped: {e}")
 
 
 def part4_hitl():

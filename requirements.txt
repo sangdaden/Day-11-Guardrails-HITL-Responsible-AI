@@ -1,3 +1,7 @@
 google-genai>=1.0.0
 google-adk>=0.3.0
-nemoguardrails>=0.10.0
+# Optional on Windows/Python 3.12 due to annoy native build issues.
+# For NeMo features, use Python 3.11 or install Visual C++ Build Tools first.
+nemoguardrails>=0.10.0; python_version < "3.12"
+streamlit>=1.39.0
+pandas>=2.2.0
